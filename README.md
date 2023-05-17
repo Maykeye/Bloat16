@@ -1,5 +1,5 @@
 # Bloat16
-[Stat taker] Your bfloat so fat, you can throw 2 bits without losing any precision
+[Stat taker] Your bfloat so fat, you can throw away 2+ bits without losing any precision
 
 This tool measures bit distribution in a model after converting it to b(f)loat16
 
