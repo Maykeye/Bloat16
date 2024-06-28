@@ -48,9 +48,12 @@ def format_stats(stats):
         stats[i] = f"{fg}{stats[i]:.3f}{colorama.Fore.RESET}"
     return stats
 
+
 def calc_strides(layer, n):
-    assert layer.numel() % n == 0
-    z = layer.reshape(-1 ,n)
+    # Check if layer can be split to strides where all signs are known
+    if layer.numel() % n != 0:
+        return None
+    z = layer.reshape(-1, n)
     neg = z <= 0
     pos = z >= 0
     neg = neg.all(-1)
@@ -76,7 +79,6 @@ def stats_of_file(fname):
     print("Calc stat")
     for layer_name, layer in m.items():
         bitmask, stats = bf16_mask(layer)
-        strides = calc_strides(layer, 16)
         bitmask = f"{bitmask:016b}"[::-1]
         bitmask += colorama.Fore.RESET
         bitmask = bitmask.replace("1",
@@ -84,8 +86,12 @@ def stats_of_file(fname):
         print(f"{layer_name:42}: {num2suf(layer.numel()):6} {bitmask}", end="")
         for fmt in format_stats(stats):
             print(f" {fmt}", end=f"")
-        print(strides)
 
+        strides = calc_strides(layer, 16)
+        if strides is not None:
+            print(strides)
+        else:
+            print()
 
 
 if __name__ == "__main__":
