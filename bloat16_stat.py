@@ -25,7 +25,7 @@ def bf16_mask(x0: torch.Tensor):
     assert x0.dim() == 1
     x0i16 = x0.view(dtype=torch.int16)
     mask = torch.tensor(0, dtype=torch.int32)
-    stats = [0 for _ in range(16)]
+    stats = [0.0 for _ in range(16)]
 
     for i in range(16):
         # calculate number of bits set at i-th position
@@ -96,5 +96,5 @@ def stats_of_file(fname):
 
 if __name__ == "__main__":
     import sys
-    assert len(sys.argv) == 2, "bloat16 <filename>"
+    assert len(sys.argv) == 2, f"{sys.argv[0]} <filename>"
     stats_of_file(sys.argv[1])
